@@ -39,6 +39,28 @@ namespace android {
 android::Mutex android::SensorManager::sLock;
 std::map<String16, SensorManager*> android::SensorManager::sPackageInstances;
 
+#ifdef MTK_HARDWARE
+// be compatible with MTK Lollipop blobs
+extern "C" {
+    android::Mutex _ZN7android9SingletonINS_13SensorManagerEE5sLockE;
+    SensorManager *_ZN7android9SingletonINS_13SensorManagerEE9sInstanceE = nullptr;
+}
+
+static String8 packageName8("");
+static String16 packageName16("");
+
+
+extern "C" void _ZN7android13SensorManagerC1Ev(void)
+{
+    _ZN7android13SensorManagerC1ERKNS_8String16E(packageName16);
+}
+
+extern "C" void *_ZN7android13SensorManager16createEventQueueEv(void)
+{
+    return _ZN7android13SensorManager16createEventQueueENS_7String8Ei(packageName8, 0);
+}
+#endif  // MTK_HARDWARE
+
 SensorManager& SensorManager::getInstanceForPackage(const String16& packageName) {
     Mutex::Autolock _l(sLock);
     SensorManager* sensorManager;

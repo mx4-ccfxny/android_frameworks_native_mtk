@@ -78,6 +78,21 @@ private:
     const String16 mOpPackageName;
 };
 
+
+#ifdef MTK_HARDWARE
+// be compatible with MTK Lollipop blobs
+extern "C" {
+    extern android::Mutex _ZN7android9SingletonINS_13SensorManagerEE5sLockE;
+    extern SensorManager *_ZN7android9SingletonINS_13SensorManagerEE9sInstanceE;
+
+    extern void _ZN7android13SensorManagerC1ERKNS_8String16E(const String16& opPackageName);
+    extern void *_ZN7android13SensorManager16createEventQueueENS_7String8Ei(String8 packageName, int mode);
+
+    void _ZN7android13SensorManagerC1Ev(void);
+    void *_ZN7android13SensorManager16createEventQueueEv(void);
+}
+#endif  // MTK_HARDWARE
+
 // ----------------------------------------------------------------------------
 }; // namespace android
 
